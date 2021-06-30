@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
+import 'dart:convert';
 
 void main() => runApp(Homepage());
 
@@ -11,7 +12,7 @@ class widgetelements {
   const widgetelements(this.name);
 }
 
-const urlPrefix = "http://10.96.16.65:5001/api";
+const urlPrefix = "https://10.96.16.65:5001/api";
 
 /// Cette class comprend tous les éléments sur la page principale de l'app
 class Homepage extends StatelessWidget {
@@ -457,6 +458,7 @@ class _SendmsgState extends State<Sendmsg> {
                   //print(messageController.text);
                   final message = messageController.text.toString();
                   sendMessagePost(message);
+                  print(_chosenValue,);
                 },
               ),
             ),
@@ -467,14 +469,13 @@ class _SendmsgState extends State<Sendmsg> {
   }
 
   Future<void> sendMessagePost(message) async {
+    final content = {"filtre": ["1"], "content": message};
     final url = Uri.parse('$urlPrefix/messages/newMessageText');
-    final json = {
-      "filtre": ["1"],
-      "content": message
-    };
-    final response = await post(url, body: json.toString());
-    debugPrint('Status code: ${response.statusCode}');
-    debugPrint('Body: ${response.body}');
+    final headers = {"Content-type": "application/json"};
+    final json = jsonEncode(content);
+    final response = await post(url, headers: headers, body: json);
+    print('Status code: ${response.statusCode}');
+    print('Body: ${response.body}');
   }
 
   Future<void> messageGet() async {
