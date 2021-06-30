@@ -409,7 +409,7 @@ class _SendmsgState extends State<Sendmsg> {
                   border: OutlineInputBorder()),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
+                  return 'Ecrivez ici';
                 }
                 return null;
               },
@@ -436,7 +436,7 @@ class _SendmsgState extends State<Sendmsg> {
                 );
               }).toList(),
               hint: Text(
-                "Please choose a langauage",
+                "Choisir sa catégorie",
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 14,
