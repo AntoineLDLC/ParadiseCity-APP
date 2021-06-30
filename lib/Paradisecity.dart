@@ -87,31 +87,70 @@ class Homepage extends StatelessWidget {
 }
 
 /// ------- Livepage -------
-class Livepage extends StatelessWidget {
+class LivePage extends StatefulWidget {
+  const LivePage({Key key}) : super(key: key);
+
+  @override
+  _LivePageState createState() => _LivePageState();
+}
+
+class _LivePageState extends State<LivePage> {
   final widgetphoto = <widgetelements>[
     new widgetelements("Live"),
   ];
+  var liveIsOn = true;
 
   @override
+  void initState() {
+    super.initState();
+    makeGetRequest();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Live"),
       ),
-      body: TextButton(
-        style: TextButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20),
-        ),
-        onPressed: () {
-          makePostRequest();
-        },
-        child: const Text('Lancer le live'),
+      body: Row(
+        children: [
+          Expanded(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                textStyle: const TextStyle(fontSize: 20),
+              ),
+              onPressed: () {
+                if (liveIsOn == true) {
+                  Postliveon();
+                  setState(() {
+                    liveIsOn = !liveIsOn;
+                  });
+                } else {
+                  Postliveoff();
+                  setState(() {
+                    liveIsOn = !liveIsOn;
+                  });
+                }
+              },
+              child: liveIsOn
+                  ? const Text('Lancer le live')
+                  : const Text('Terminer le live'),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Future<void> makePostRequest() async {
-    final url = Uri.parse('$urlPrefix/screenSwitch/Live&On');
+  Future<void> Postliveon() async {
+    final url = Uri.parse('$urlPrefix/screen/1/Live/On');
+    final headers = {"Content-type": "application/json"};
+    final response = await post(url, headers: headers);
+    print('Status code: ${response.statusCode}');
+    print('Body: ${response.body}');
+  }
+
+  Future<void> Postliveoff() async {
+    final url = Uri.parse('$urlPrefix/screen/2/Live/Off');
     final headers = {"Content-type": "application/json"};
     final response = await post(url, headers: headers);
     print('Status code: ${response.statusCode}');
@@ -119,11 +158,13 @@ class Livepage extends StatelessWidget {
   }
 
   Future<void> makeGetRequest() async {
-    final url = Uri.parse('$urlPrefix/screenSwitch/test');
+    final url = Uri.parse('$urlPrefix/getData');
     Response response = await get(url);
     debugPrint('Status code: ${response.statusCode}');
     debugPrint('Headers: ${response.headers}');
     debugPrint('Body: ${response.body}');
+    var getData = jsonDecode(response.body);
+    print(getData['screensCommands']['screen1']);
   }
 }
 
@@ -155,6 +196,31 @@ class Msgpage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Messages"),
       ),
+      body: Column(
+        children: [
+          Card(
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                      child: Text('Bonjour je suis antoine et j\'ecris un text pour voir ce que cela rend dans une contenaire voila merci aurevoir et bonne journée.'),
+                  ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                    child: Text('Bien être', textAlign: TextAlign.right),
+                    ),
+      ],
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -180,22 +246,21 @@ class Sondagespage extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
             child: Column(children: [
               Text(
-                  'Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout '),
+                  'Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout ? '),
               Row(
                 children: [
                   Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 20, horizontal: 20.0)),
                   ElevatedButton(
-                    child: Text('Oui'),
-                    onPressed: () {
-                      print('Envoie 1');
-                    },
-                  ),
+                      child: Text('Oui'),
+                      onPressed: () {
+                        sendvote('oui');
+                      }),
                   ElevatedButton(
                     child: Text('Non'),
                     onPressed: () {
-                      print('Envoie 2');
+                      sendvote('non');
                     },
                   ),
                 ],
@@ -205,6 +270,18 @@ class Sondagespage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> sendvote(vote) async {
+    final content = {
+      "data": vote,
+    };
+    final url = Uri.parse('$urlPrefix/sondage');
+    final headers = {"Content-type": "application/json"};
+    final json = jsonEncode(content);
+    final response = await post(url, headers: headers, body: json);
+    print('Status code: ${response.statusCode}');
+    print('Body: ${response.body}');
   }
 }
 
@@ -287,7 +364,7 @@ class MyWidget extends StatelessWidget {
       case "Live":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Livepage()),
+          MaterialPageRoute(builder: (context) => LivePage()),
         );
         break;
       case "Vidéo":
@@ -388,7 +465,6 @@ class Sendmsg extends StatefulWidget {
 }
 
 class _SendmsgState extends State<Sendmsg> {
-
   var dropdownValues = <String>[
     'les probl\u00e8mes',
     'besoin d\'aide',
@@ -428,7 +504,8 @@ class _SendmsgState extends State<Sendmsg> {
               //elevation: 5,
               style: TextStyle(color: Colors.white),
               iconEnabledColor: Colors.black,
-              items: dropdownValues.map<DropdownMenuItem<String>>((String value) {
+              items:
+                  dropdownValues.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
@@ -459,7 +536,9 @@ class _SendmsgState extends State<Sendmsg> {
                   //print(messageController.text);
                   final message = messageController.text.toString();
                   sendMessagePost(message);
-                  print(_chosenValue,);
+                  print(
+                    _chosenValue,
+                  );
                 },
               ),
             ),
@@ -470,7 +549,10 @@ class _SendmsgState extends State<Sendmsg> {
   }
 
   Future<void> sendMessagePost(message) async {
-    final content = {"filtre": [dropdownValues.indexOf(_chosenValue)], "content": message};
+    final content = {
+      "filtre": [dropdownValues.indexOf(_chosenValue)],
+      "content": message
+    };
     final url = Uri.parse('$urlPrefix/messages/newMessageText');
     final headers = {"Content-type": "application/json"};
     final json = jsonEncode(content);
