@@ -185,12 +185,23 @@ class Videopage extends StatelessWidget {
 }
 
 /// ------- Messagespage -------
-class Msgpage extends StatelessWidget {
+
+class Msgpage extends StatefulWidget {
+  @override
+
+  _MsgpageState createState() => _MsgpageState();
+}
+
+class _MsgpageState extends State<Msgpage> {
   final widgetphoto = <widgetelements>[
     new widgetelements("Messages"),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    getMessage();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -198,27 +209,7 @@ class Msgpage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Card(
-            child: Container(
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                      child: Text('Bonjour je suis antoine et j\'ecris un text pour voir ce que cela rend dans une contenaire voila merci aurevoir et bonne journée.'),
-                  ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                    child: Text('Bien être', textAlign: TextAlign.right),
-                    ),
-      ],
-              ),
-            ),
-          )
+          Prb(),
         ],
       ),
     );
@@ -561,14 +552,66 @@ class _SendmsgState extends State<Sendmsg> {
     print('Body: ${response.body}');
   }
 
-  Future<void> messageGet() async {
-    final url = Uri.parse('$urlPrefix/screenSwitch/GetData');
-    final headers = {"Access-Control-Allow-Origin": "*"};
-    final response = await get(
-      url,
-      headers: headers,
+}
+
+class Prb extends StatelessWidget {
+   Prb({Key key}) : super(key: key);
+
+
+  var colorFont = {
+    "0":["220, 38, 38, 1", "254, 202, 202, 1"],
+    "1":["217, 119, 6, 1", "253, 230, 138, 1"],
+    "2":["5, 150, 105, 1", "167, 243, 208, 1"],
+    "3":["37, 99, 235, 1", "191, 219, 254, 1"],
+    "4":["79, 70, 229, 1", "199, 210, 254, 1"],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Card(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text('Bonjour je suis antoine et j\'ecris un text pour voir ce que cela rend dans une contenaire voila merci aurevoir et bonne journée.'),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                    'Les probl\u00e8mes',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(220, 38, 38, 1),
+                      background: Paint()
+                        ..strokeWidth = 17.0
+                        ..color = Color.fromRGBO(254, 202, 202, 1)
+                        ..style = PaintingStyle.stroke
+                        ..strokeJoin = StrokeJoin.round,
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
-    debugPrint('Status code: ${response.statusCode}');
-    debugPrint('Body: ${response.body}');
   }
+}
+
+Future<void> getMessage() async {
+  final url = Uri.parse('$urlPrefix/messages/getData');
+  final headers = {"Content-type": "application/json"};
+  Response response = await get(url, headers: headers);
+  print('Status code: ${response.statusCode}');
+  print('Headers: ${response.headers}');
+  print('Body: ${response.body}');
 }
