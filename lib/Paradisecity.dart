@@ -105,7 +105,7 @@ class Livepage extends StatelessWidget {
         onPressed: () {
           makePostRequest();
         },
-        child: const Text('Get'),
+        child: const Text('Lancer le live'),
       ),
     );
   }
@@ -389,6 +389,13 @@ class Sendmsg extends StatefulWidget {
 
 class _SendmsgState extends State<Sendmsg> {
 
+  var dropdownValues = <String>[
+    'les probl\u00e8mes',
+    'besoin d\'aide',
+    'remonté d\'id\u00e9es',
+    '\u00e9venements',
+    'une simple pens\u00e9e',
+  ];
   TextEditingController messageController = TextEditingController();
   @override
   String _chosenValue;
@@ -421,13 +428,7 @@ class _SendmsgState extends State<Sendmsg> {
               //elevation: 5,
               style: TextStyle(color: Colors.white),
               iconEnabledColor: Colors.black,
-              items: <String>[
-                'les probl\u00e8mes',
-                'besoin d\'aide',
-                'remonté d\'id\u00e9es',
-                '\u00e9venements',
-                'une simple pens\u00e9e',
-              ].map<DropdownMenuItem<String>>((String value) {
+              items: dropdownValues.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
@@ -469,7 +470,7 @@ class _SendmsgState extends State<Sendmsg> {
   }
 
   Future<void> sendMessagePost(message) async {
-    final content = {"filtre": ["1"], "content": message};
+    final content = {"filtre": [dropdownValues.indexOf(_chosenValue)], "content": message};
     final url = Uri.parse('$urlPrefix/messages/newMessageText');
     final headers = {"Content-type": "application/json"};
     final json = jsonEncode(content);
