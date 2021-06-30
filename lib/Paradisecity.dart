@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 
 void main() => runApp(Homepage());
 
@@ -10,13 +11,13 @@ class widgetelements {
   const widgetelements(this.name);
 }
 
-const urlPrefix = "http://10.96.16.65:5000";
+const urlPrefix = "http://10.96.16.65:5001/api";
 
 /// Cette class comprend tous les éléments sur la page principale de l'app
 class Homepage extends StatelessWidget {
   final widgetmain = <widgetelements>[
     // On creer une ref pour les noms des widgets
-    new widgetelements("Photo"), //[0]
+    new widgetelements("Live"), //[0]
     new widgetelements("Vidéo"), //[1]
     new widgetelements("Message"), //[2]
     new widgetelements("Sondage"), //[3]
@@ -33,37 +34,34 @@ class Homepage extends StatelessWidget {
         primaryColor: Colors.deepOrange[100], // Couleur
       ),
       home: Scaffold(
-        floatingActionButton: SpeedDial(
-          backgroundColor: Colors.red,
-          children: [
-            SpeedDialChild(
-              child: Icon(Icons.accessibility),
-              backgroundColor: Colors.red,
-              label: 'First',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('FIRST CHILD'),
-              onLongPress: () => print('FIRST CHILD LONG PRESS'),
-            ),
-            SpeedDialChild(
-              child: Icon(Icons.brush),
-              backgroundColor: Colors.blue,
-              label: 'Second',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('SECOND CHILD'),
-              onLongPress: () => print('SECOND CHILD LONG PRESS'),
-            ),
-            SpeedDialChild(
-              child: Icon(Icons.keyboard_voice),
-              backgroundColor: Colors.green,
-              label: 'Third',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('THIRD CHILD'),
-              onLongPress: () => print('THIRD CHILD LONG PRESS'),
-            ),
-          ],
-        ),
         backgroundColor: Colors.white60,
-        appBar: AppBar(title: Text(_title)),
+        appBar: AppBar(
+          title: Text(_title),
+        ),
+        drawer: Builder(
+          builder: (context) => Drawer(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text('Envoyer un message'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => Sendmsg()));
+                    print('Ouverture page pour envoyer un message');
+                  },
+                ),
+                ListTile(
+                  title: Text('Enregistrer une video'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Enregistrer un vocal'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
         body: ListView(children: [
           /// On créé une liste infini
           MyWidget(widgetmain[0]),
@@ -87,16 +85,18 @@ class Homepage extends StatelessWidget {
   }
 }
 
-/// ------- Photopage -------
-class Photopage extends StatelessWidget {
+/// ------- Livepage -------
+class Livepage extends StatelessWidget {
   final widgetphoto = <widgetelements>[
-    new widgetelements("photo"),
+    new widgetelements("Live"),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Photo"),),
+      appBar: AppBar(
+        title: Text("Live"),
+      ),
       body: TextButton(
         style: TextButton.styleFrom(
           textStyle: const TextStyle(fontSize: 20),
@@ -110,12 +110,13 @@ class Photopage extends StatelessWidget {
   }
 
   Future<void> makePostRequest() async {
-    final url = Uri.parse('$urlPrefix/screenSwitch/Live&Onq');
+    final url = Uri.parse('$urlPrefix/screenSwitch/Live&On');
     final headers = {"Content-type": "application/json"};
     final response = await post(url, headers: headers);
     print('Status code: ${response.statusCode}');
     print('Body: ${response.body}');
   }
+
   Future<void> makeGetRequest() async {
     final url = Uri.parse('$urlPrefix/screenSwitch/test');
     Response response = await get(url);
@@ -168,6 +169,39 @@ class Sondagespage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sondage"),
+      ),
+      body: Center(
+        child: Card(
+          child: Container(
+            height: 300,
+            width: 300,
+            margin: EdgeInsets.all(50.0),
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+            child: Column(children: [
+              Text(
+                  'Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout '),
+              Row(
+                children: [
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 20.0)),
+                  ElevatedButton(
+                    child: Text('Oui'),
+                    onPressed: () {
+                      print('Envoie 1');
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text('Non'),
+                    onPressed: () {
+                      print('Envoie 2');
+                    },
+                  ),
+                ],
+              ),
+            ]),
+          ),
+        ),
       ),
     );
   }
@@ -249,10 +283,10 @@ class MyWidget extends StatelessWidget {
 
   void ChangePage(context) {
     switch (element.name) {
-      case "Photo":
+      case "Live":
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Photopage()),
+          MaterialPageRoute(builder: (context) => Livepage()),
         );
         break;
       case "Vidéo":
@@ -277,6 +311,12 @@ class MyWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Jeuxpage()),
+        );
+        break;
+      case "Ecrire un message":
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Sendmsg()),
         );
         break;
     }
@@ -335,5 +375,113 @@ class ligneblanche extends StatelessWidget {
             )),
       ),
     );
+  }
+}
+
+//-------------------------------------------------------------------------------//
+
+class Sendmsg extends StatelessWidget {
+  Sendmsg({Key key}) : super(key: key);
+  TextEditingController messageController = TextEditingController();
+  StateController createState = DropDownDemoState();
+  @override
+  String _chosenValue;
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Envoyer un message"),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              controller: messageController,
+              maxLength: 400,
+              decoration: const InputDecoration(
+                  labelText: 'Votre Message',
+                  hintText: 'Ecrivez ici',
+                  border: OutlineInputBorder()),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+            DropdownButton<String>(
+              focusColor: Colors.white,
+              value: _chosenValue,
+              //elevation: 5,
+              style: TextStyle(color: Colors.white),
+              iconEnabledColor: Colors.black,
+              items: <String>[
+                'Android',
+                'IOS',
+                'Flutter',
+                'Node',
+                'Java',
+                'Python',
+                'PHP',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                );
+              }).toList(),
+              hint: Text(
+                "Please choose a langauage",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+              ),
+              onChanged: (String value) {
+                setState(() {
+                  _chosenValue = value;
+                });
+              },
+            ),
+            SizedBox(
+              width: 100,
+              height: 30.0,
+              child: ElevatedButton(
+                child: Text('Envoyer'),
+                onPressed: () {
+                  //print(messageController.text);
+                  final message = messageController.text.toString();
+                  sendMessagePost(message);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> sendMessagePost(message) async {
+    final url = Uri.parse('$urlPrefix/messages/newMessageText');
+    final json = {
+      "filtre": ["1"],
+      "content": message
+    };
+    final response = await post(url, body: json.toString());
+    debugPrint('Status code: ${response.statusCode}');
+    debugPrint('Body: ${response.body}');
+  }
+
+  Future<void> messageGet() async {
+    final url = Uri.parse('$urlPrefix/screenSwitch/GetData');
+    final headers = {"Access-Control-Allow-Origin": "*"};
+    final response = await get(
+      url,
+      headers: headers,
+    );
+    debugPrint('Status code: ${response.statusCode}');
+    debugPrint('Body: ${response.body}');
   }
 }
