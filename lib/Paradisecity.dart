@@ -379,11 +379,16 @@ class ligneblanche extends StatelessWidget {
 }
 
 //-------------------------------------------------------------------------------//
+class Sendmsg extends StatefulWidget {
+  const Sendmsg({Key key}) : super(key: key);
 
-class Sendmsg extends StatelessWidget {
-  Sendmsg({Key key}) : super(key: key);
+  @override
+  _SendmsgState createState() => _SendmsgState();
+}
+
+class _SendmsgState extends State<Sendmsg> {
+
   TextEditingController messageController = TextEditingController();
-  StateController createState = DropDownDemoState();
   @override
   String _chosenValue;
   Widget build(BuildContext context) {
@@ -416,13 +421,11 @@ class Sendmsg extends StatelessWidget {
               style: TextStyle(color: Colors.white),
               iconEnabledColor: Colors.black,
               items: <String>[
-                'Android',
-                'IOS',
-                'Flutter',
-                'Node',
-                'Java',
-                'Python',
-                'PHP',
+                'les probl\u00e8mes',
+                'besoin d\'aide',
+                'remonté d\'id\u00e9es',
+                '\u00e9venements',
+                'une simple pens\u00e9e',
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
