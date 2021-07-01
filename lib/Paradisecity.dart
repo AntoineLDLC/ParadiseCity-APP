@@ -12,7 +12,7 @@ class widgetelements {
   const widgetelements(this.name);
 }
 
-const urlPrefix = "http://10.96.16.65:5001/api";
+const urlPrefix = "https://10.96.16.65:5001/api";
 
 /// Cette class comprend tous les éléments sur la page principale de l'app
 class Homepage extends StatelessWidget {
@@ -196,7 +196,7 @@ class _MsgpageState extends State<Msgpage> {
 
 
   Future<void> getMessage() async {
-    print("SALUT TOUT LE MONDE");
+
 
     final url = Uri.parse('$urlPrefix/messages/getData');
     final headers = {"Content-type": "application/json"};
@@ -210,7 +210,6 @@ class _MsgpageState extends State<Msgpage> {
     {
       list.add(new MessageData(m["content"], int.parse(m["filtre"][0])));
     }
-    print("SALUT TOUT LE MONDE");
     setState(()=>getData = list);
   }
 
