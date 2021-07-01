@@ -12,7 +12,7 @@ class widgetelements {
   const widgetelements(this.name);
 }
 
-const urlPrefix = "https://10.96.16.65:5001/api";
+const urlPrefix = "https://bd6cd1a9bb92.ngrok.io/api";
 
 /// Cette class comprend tous les éléments sur la page principale de l'app
 class Homepage extends StatelessWidget {
@@ -550,11 +550,14 @@ class _SendmsgState extends State<Sendmsg> {
 
 }
 
+class MessageWidget extends StatefulWidget {
+  const MessageWidget({Key key}) : super(key: key);
 
+  @override
+  _MessageWidgetState createState() => _MessageWidgetState();
+}
 
-class MessageWidget extends StatelessWidget {
-   MessageWidget({Key key}) : super(key: key);
-
+class _MessageWidgetState extends State<MessageWidget> {
 
   var colorFont = {
     "0":["220, 38, 38, 1", "254, 202, 202, 1"],
@@ -563,23 +566,42 @@ class MessageWidget extends StatelessWidget {
     "3":["37, 99, 235, 1", "191, 219, 254, 1"],
     "4":["79, 70, 229, 1", "199, 210, 254, 1"],
   };
+  var getData;
+   Future<void> getMessagesData() async {
+     final url = Uri.parse('$urlPrefix/messages/getData');
+     final headers = {"Content-type": "application/json"};
+     Response response = await get(url, headers: headers);
+     //print('Status code: ${response.statusCode}');
+     //print('Headers: ${response.headers}');
+     //print('Body: ${response.body}');
 
-  @override
+     getData = jsonDecode(response.body);
+     print(getData["Messages"]);
+     return getData["Messages"];
+   }
 
+
+   @override
+   void initState() {
+     super.initState();
+     getMessagesData();
+   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
         child: ListView (
-            children: [forEach (var data in getData) Messages(data)];
+            children: [for (var data in getData) Messages()]
       ),
     );
   }
 }
 
 class Messages extends StatefulWidget {
-  const Messages({Key key}) : super(key: key);
+  var data;
+
+  Messages({Key key, this.data}) : super(key: key);
 
   @override
   getMessages createState() => getMessages();
@@ -612,13 +634,13 @@ class getMessages extends State<Messages> {
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                      'Bonjour je suis antoine et j\'ecris un text pour voir ce que cela rend dans une contenaire voila merci aurevoir et bonne journée.'),
+                      widget.data.message),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                    'Les probl\u00e8mes',
+                    widget.data.category,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(220, 38, 38, 1),
@@ -639,18 +661,7 @@ class getMessages extends State<Messages> {
 
 
 class getMessagesContent{
-  Future<void> getMessagesData() async {
-    final url = Uri.parse('$urlPrefix/messages/getData');
-    final headers = {"Content-type": "application/json"};
-    Response response = await get(url, headers: headers);
-    //print('Status code: ${response.statusCode}');
-    //print('Headers: ${response.headers}');
-    //print('Body: ${response.body}');
 
-    final getData = jsonDecode(response.body);
-    print(getData["Messages"]);
-    return getData;
-  }
 }
 
 
