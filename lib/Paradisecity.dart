@@ -12,7 +12,7 @@ class widgetelements {
   const widgetelements(this.name);
 }
 
-const urlPrefix = "https://bd6cd1a9bb92.ngrok.io/api";
+const urlPrefix = "http://10.96.16.65:5001/api";
 
 /// Cette class comprend tous les éléments sur la page principale de l'app
 class Homepage extends StatelessWidget {
@@ -193,21 +193,48 @@ class Msgpage extends StatefulWidget {
 }
 
 class _MsgpageState extends State<Msgpage> {
+
+
+  Future<void> getMessage() async {
+    print("SALUT TOUT LE MONDE");
+
+    final url = Uri.parse('$urlPrefix/messages/getData');
+    final headers = {"Content-type": "application/json"};
+    Response response = await get(url, headers: headers);
+    print('Status code: ${response.statusCode}');
+    print('Headers: ${response.headers}');
+    print('Body: ${response.body}');
+    List<MessageData> list = [];
+    var deco = jsonDecode(response.body)["Messages"];
+    for(var m in deco)
+    {
+      list.add(new MessageData(m["content"], int.parse(m["filtre"][0])));
+    }
+    print("SALUT TOUT LE MONDE");
+    setState(()=>getData = list);
+  }
+
+  List<MessageData> getData = [];
+
+
   final widgetphoto = <widgetelements>[
     new widgetelements("Messages"),
   ];
 
   @override
+  void initState() {
+    getMessage();
+    super.initState();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Messages"),
       ),
-      body: Column(
-        children: [
-          MessageWidget(),
-        ],
-      ),
+      body:
+      MessagesList(getData),
+
+
     );
   }
 }
@@ -238,7 +265,7 @@ class Sondagespage extends StatelessWidget {
                 children: [
                   Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 20.0)),
+                      EdgeInsets.symmetric(vertical: 20, horizontal: 20.0)),
                   ElevatedButton(
                       child: Text('Oui'),
                       onPressed: () {
@@ -452,13 +479,7 @@ class Sendmsg extends StatefulWidget {
 }
 
 class _SendmsgState extends State<Sendmsg> {
-  var dropdownValues = <String>[
-    'les probl\u00e8mes',
-    'besoin d\'aide',
-    'remonté d\'id\u00e9es',
-    '\u00e9venements',
-    'une simple pens\u00e9e',
-  ];
+
   TextEditingController messageController = TextEditingController();
   @override
   String _chosenValue;
@@ -492,7 +513,7 @@ class _SendmsgState extends State<Sendmsg> {
               style: TextStyle(color: Colors.white),
               iconEnabledColor: Colors.black,
               items:
-                  dropdownValues.map<DropdownMenuItem<String>>((String value) {
+              dropdownValues.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
@@ -550,15 +571,15 @@ class _SendmsgState extends State<Sendmsg> {
 
 }
 
-class MessageWidget extends StatefulWidget {
-  const MessageWidget({Key key}) : super(key: key);
+class MessagesList extends StatefulWidget {
+  var getData;
+  MessagesList(this.getData, {Key key}) : super(key: key);
 
   @override
-  _MessageWidgetState createState() => _MessageWidgetState();
+  _MessagesListState createState() => _MessagesListState();
 }
 
-class _MessageWidgetState extends State<MessageWidget> {
-
+class _MessagesListState extends State<MessagesList> {
   var colorFont = {
     "0":["220, 38, 38, 1", "254, 202, 202, 1"],
     "1":["217, 119, 6, 1", "253, 230, 138, 1"],
@@ -566,55 +587,40 @@ class _MessageWidgetState extends State<MessageWidget> {
     "3":["37, 99, 235, 1", "191, 219, 254, 1"],
     "4":["79, 70, 229, 1", "199, 210, 254, 1"],
   };
-  var getData;
-   Future<void> getMessagesData() async {
-     final url = Uri.parse('$urlPrefix/messages/getData');
-     final headers = {"Content-type": "application/json"};
-     Response response = await get(url, headers: headers);
-     //print('Status code: ${response.statusCode}');
-     //print('Headers: ${response.headers}');
-     //print('Body: ${response.body}');
-
-     getData = jsonDecode(response.body);
-     print(getData["Messages"]);
-     return getData["Messages"];
-   }
 
 
-   @override
-   void initState() {
-     super.initState();
-     getMessagesData();
-   }
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-        child: ListView (
-            children: [for (var data in getData) Messages()]
+      child: ListView (
+        children: [for(var d in this.widget.getData) Prb(d)],
       ),
     );
   }
 }
 
-class Messages extends StatefulWidget {
-  var data;
+class MessageData
+{
+  String content;
+  int category;
 
-  Messages({Key key, this.data}) : super(key: key);
-
-  @override
-  getMessages createState() => getMessages();
+  MessageData(this.content, this.category);
 }
-//STATE
-class getMessages extends State<Messages> {
-  @override
+
+class Prb extends StatelessWidget {
+  final MessageData data;
+  Prb(this.data, {Key key}) : super(key: key);
+
+
   var colorFont = {
-    "0":["220, 38, 38, 1", "254, 202, 202, 1"],
-    "1":["217, 119, 6, 1", "253, 230, 138, 1"],
-    "2":["5, 150, 105, 1", "167, 243, 208, 1"],
-    "3":["37, 99, 235, 1", "191, 219, 254, 1"],
-    "4":["79, 70, 229, 1", "199, 210, 254, 1"],
+    0:[Color.fromRGBO(220, 38, 38, 1), Color.fromRGBO(254, 202, 202, 1)],
+    1:[Color.fromRGBO(217, 119, 6, 1), Color.fromRGBO(253, 230, 138, 1)],
+    2:[Color.fromRGBO(5, 150, 105, 1), Color.fromRGBO(167, 243, 208, 1)],
+    3:[Color.fromRGBO(37, 99, 235, 1), Color.fromRGBO(191, 219, 254, 1)],
+    4:[Color.fromRGBO(79, 70, 229, 1), Color.fromRGBO(199, 210, 254, 1)],
   };
 
   @override
@@ -633,20 +639,19 @@ class getMessages extends State<Messages> {
                 padding: const EdgeInsets.all(10.0),
                 child: Align(
                   alignment: Alignment.center,
-                  child: Text(
-                      widget.data.message),
+                  child: Text(data.content),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                    widget.data.category,
+                    dropdownValues[data.category],
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(220, 38, 38, 1),
+                      color: colorFont[data.category][0],
                       background: Paint()
                         ..strokeWidth = 17.0
-                        ..color = Color.fromRGBO(254, 202, 202, 1)
+                        ..color = colorFont[data.category][1]
                         ..style = PaintingStyle.stroke
                         ..strokeJoin = StrokeJoin.round,
                     )),
@@ -659,11 +664,10 @@ class getMessages extends State<Messages> {
   }
 }
 
-
-class getMessagesContent{
-
-}
-
-
-
-
+var dropdownValues = <String>[
+  'les probl\u00e8mes',
+  'besoin d\'aide',
+  'remonté d\'id\u00e9es',
+  '\u00e9venements',
+  'une simple pens\u00e9e',
+];
