@@ -32,7 +32,7 @@ class Homepage extends StatelessWidget {
     return MaterialApp(
       title: _title,
       theme: ThemeData(
-        primaryColor: Colors.deepOrange[100], // Couleur
+        primaryColor: Color.fromRGBO(52, 73, 94, 1), // Couleur
       ),
       home: Scaffold(
         backgroundColor: Colors.white60,
@@ -422,7 +422,7 @@ class MyWidget extends StatelessWidget {
             width: 350,
             height: 180,
             decoration: new BoxDecoration(
-                color: Colors.deepOrange[50],
+                color: Color.fromRGBO(149, 165, 166, 1),
                 borderRadius: new BorderRadius.only(
                   topLeft: const Radius.circular(20.0),
                   topRight: const Radius.circular(20.0),
@@ -457,7 +457,7 @@ class ligneblanche extends StatelessWidget {
         width: 350,
         height: 10,
         decoration: new BoxDecoration(
-            color: Colors.brown,
+            color: Color.fromRGBO(52, 73, 94, 1),
             borderRadius: new BorderRadius.only(
               topLeft: const Radius.circular(20.0),
               topRight: const Radius.circular(20.0),
