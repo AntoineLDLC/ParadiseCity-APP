@@ -280,7 +280,7 @@ class Sondagespage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(40.0),
             child: Text(
-                "Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout ?",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,), textAlign: TextAlign.center,
+                "Si ce dispositif se trouvait dans votre ville, seriez-vous un des ses utilisateurs ?",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,), textAlign: TextAlign.center,
             ),
           ),
           Row(
