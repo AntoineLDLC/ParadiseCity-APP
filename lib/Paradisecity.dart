@@ -53,11 +53,17 @@ class Homepage extends StatelessWidget {
                 ),
                 ListTile(
                   title: Text('Enregistrer une video'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => sendvideopage()));
+                  },
                 ),
                 ListTile(
                   title: Text('Enregistrer un vocal'),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => voicepage()));
+                  },
                 ),
               ],
             ),
@@ -94,6 +100,7 @@ class LivePage extends StatefulWidget {
   _LivePageState createState() => _LivePageState();
 }
 
+
 class _LivePageState extends State<LivePage> {
   final widgetphoto = <widgetelements>[
     new widgetelements("Live"),
@@ -111,32 +118,38 @@ class _LivePageState extends State<LivePage> {
       appBar: AppBar(
         title: Text("Live"),
       ),
-      body: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                textStyle: const TextStyle(fontSize: 20),
+      body: Center(
+        child: Row(
+          children: [
+            Expanded(
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  primary: Colors.white,
+                  backgroundColor: Colors.teal,
+                  onSurface: Colors.grey,
+                  shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+                  textStyle: TextStyle(fontSize: 20),
+                ),
+                onPressed: () {
+                  if (liveIsOn == true) {
+                    Postliveon();
+                    setState(() {
+                      liveIsOn = !liveIsOn;
+                    });
+                  } else {
+                    Postliveoff();
+                    setState(() {
+                      liveIsOn = !liveIsOn;
+                    });
+                  }
+                },
+                child: liveIsOn
+                    ? const Text('Lancer le live')
+                    : const Text('Terminer le live'),
               ),
-              onPressed: () {
-                if (liveIsOn == true) {
-                  Postliveon();
-                  setState(() {
-                    liveIsOn = !liveIsOn;
-                  });
-                } else {
-                  Postliveoff();
-                  setState(() {
-                    liveIsOn = !liveIsOn;
-                  });
-                }
-              },
-              child: liveIsOn
-                  ? const Text('Lancer le live')
-                  : const Text('Terminer le live'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -180,6 +193,24 @@ class Videopage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Vidéo"),
       ),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Image.network(
+                  "https://static.thenounproject.com/png/745489-200.png"),
+            ),
+            Center(
+              child: Text(
+                'Page en développement',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -188,16 +219,11 @@ class Videopage extends StatelessWidget {
 
 class Msgpage extends StatefulWidget {
   @override
-
   _MsgpageState createState() => _MsgpageState();
 }
 
 class _MsgpageState extends State<Msgpage> {
-
-
   Future<void> getMessage() async {
-
-
     final url = Uri.parse('$urlPrefix/messages/getData');
     final headers = {"Content-type": "application/json"};
     Response response = await get(url, headers: headers);
@@ -206,15 +232,13 @@ class _MsgpageState extends State<Msgpage> {
     print('Body: ${response.body}');
     List<MessageData> list = [];
     var deco = jsonDecode(response.body)["Messages"];
-    for(var m in deco)
-    {
+    for (var m in deco) {
       list.add(new MessageData(m["content"], int.parse(m["filtre"][0])));
     }
-    setState(()=>getData = list);
+    setState(() => getData = list);
   }
 
   List<MessageData> getData = [];
-
 
   final widgetphoto = <widgetelements>[
     new widgetelements("Messages"),
@@ -225,15 +249,13 @@ class _MsgpageState extends State<Msgpage> {
     getMessage();
     super.initState();
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Messages"),
       ),
-      body:
-      MessagesList(getData),
-
-
+      body: MessagesList(getData),
     );
   }
 }
@@ -251,36 +273,34 @@ class Sondagespage extends StatelessWidget {
         title: Text("Sondage"),
       ),
       body: Center(
-        child: Card(
-          child: Container(
-            height: 300,
-            width: 300,
-            margin: EdgeInsets.all(50.0),
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-            child: Column(children: [
-              Text(
-                  'Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout ? '),
-              Row(
-                children: [
-                  Padding(
-                      padding:
-                      EdgeInsets.symmetric(vertical: 20, horizontal: 20.0)),
-                  ElevatedButton(
-                      child: Text('Oui'),
-                      onPressed: () {
-                        sendvote('oui');
-                      }),
-                  ElevatedButton(
-                    child: Text('Non'),
-                    onPressed: () {
-                      sendvote('non');
-                    },
-                  ),
-                ],
-              ),
-            ]),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+          Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Text(
+                "Pensez vous que Lyon doit continuer de mettre en place des pistes cyclabe partout ?",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20,), textAlign: TextAlign.center,
+            ),
           ),
-        ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, //Center Row contents horizontally,
+              crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
+            children: [
+              ElevatedButton(
+                  child: Text('Oui'),
+                  onPressed: () {
+                    sendvote('oui');
+                  }),
+              ElevatedButton(
+                child: Text('Non'),
+                onPressed: () {
+                  sendvote('non');
+                },
+              ),
+            ],
+          ),
+        ]),
       ),
     );
   }
@@ -478,7 +498,6 @@ class Sendmsg extends StatefulWidget {
 }
 
 class _SendmsgState extends State<Sendmsg> {
-
   TextEditingController messageController = TextEditingController();
   @override
   String _chosenValue;
@@ -512,7 +531,7 @@ class _SendmsgState extends State<Sendmsg> {
               style: TextStyle(color: Colors.white),
               iconEnabledColor: Colors.black,
               items:
-              dropdownValues.map<DropdownMenuItem<String>>((String value) {
+                  dropdownValues.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(
@@ -567,7 +586,6 @@ class _SendmsgState extends State<Sendmsg> {
     print('Status code: ${response.statusCode}');
     print('Body: ${response.body}');
   }
-
 }
 
 class MessagesList extends StatefulWidget {
@@ -580,29 +598,25 @@ class MessagesList extends StatefulWidget {
 
 class _MessagesListState extends State<MessagesList> {
   var colorFont = {
-    "0":["220, 38, 38, 1", "254, 202, 202, 1"],
-    "1":["217, 119, 6, 1", "253, 230, 138, 1"],
-    "2":["5, 150, 105, 1", "167, 243, 208, 1"],
-    "3":["37, 99, 235, 1", "191, 219, 254, 1"],
-    "4":["79, 70, 229, 1", "199, 210, 254, 1"],
+    "0": ["220, 38, 38, 1", "254, 202, 202, 1"],
+    "1": ["217, 119, 6, 1", "253, 230, 138, 1"],
+    "2": ["5, 150, 105, 1", "167, 243, 208, 1"],
+    "3": ["37, 99, 235, 1", "191, 219, 254, 1"],
+    "4": ["79, 70, 229, 1", "199, 210, 254, 1"],
   };
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: ListView (
-        children: [for(var d in this.widget.getData) Prb(d)],
+      child: ListView(
+        children: [for (var d in this.widget.getData) Prb(d)],
       ),
     );
   }
 }
 
-class MessageData
-{
+class MessageData {
   String content;
   int category;
 
@@ -613,13 +627,12 @@ class Prb extends StatelessWidget {
   final MessageData data;
   Prb(this.data, {Key key}) : super(key: key);
 
-
   var colorFont = {
-    0:[Color.fromRGBO(220, 38, 38, 1), Color.fromRGBO(254, 202, 202, 1)],
-    1:[Color.fromRGBO(217, 119, 6, 1), Color.fromRGBO(253, 230, 138, 1)],
-    2:[Color.fromRGBO(5, 150, 105, 1), Color.fromRGBO(167, 243, 208, 1)],
-    3:[Color.fromRGBO(37, 99, 235, 1), Color.fromRGBO(191, 219, 254, 1)],
-    4:[Color.fromRGBO(79, 70, 229, 1), Color.fromRGBO(199, 210, 254, 1)],
+    0: [Color.fromRGBO(220, 38, 38, 1), Color.fromRGBO(254, 202, 202, 1)],
+    1: [Color.fromRGBO(217, 119, 6, 1), Color.fromRGBO(253, 230, 138, 1)],
+    2: [Color.fromRGBO(5, 150, 105, 1), Color.fromRGBO(167, 243, 208, 1)],
+    3: [Color.fromRGBO(37, 99, 235, 1), Color.fromRGBO(191, 219, 254, 1)],
+    4: [Color.fromRGBO(79, 70, 229, 1), Color.fromRGBO(199, 210, 254, 1)],
   };
 
   @override
@@ -643,8 +656,7 @@ class Prb extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.bottomRight,
-                child: Text(
-                    dropdownValues[data.category],
+                child: Text(dropdownValues[data.category],
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: colorFont[data.category][0],
@@ -670,3 +682,75 @@ var dropdownValues = <String>[
   '\u00e9venements',
   'une simple pens\u00e9e',
 ];
+
+class voicepage extends StatefulWidget {
+  const voicepage({Key key}) : super(key: key);
+
+  @override
+  _voicepageState createState() => _voicepageState();
+}
+
+class _voicepageState extends State<voicepage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Enregistrer une video"),
+      ),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Image.network(
+                  "https://static.thenounproject.com/png/745489-200.png"),
+            ),
+            Center(
+              child: Text(
+                'Page en développement',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class sendvideopage extends StatefulWidget {
+  const sendvideopage({Key key}) : super(key: key);
+
+  @override
+  _sendvideopageState createState() => _sendvideopageState();
+}
+
+class _sendvideopageState extends State<sendvideopage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Enregistrer un message vocal"),
+      ),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Image.network(
+                  "https://static.thenounproject.com/png/745489-200.png"),
+            ),
+            Center(
+              child: Text(
+                'Page en développement',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
