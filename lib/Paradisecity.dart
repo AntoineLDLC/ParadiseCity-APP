@@ -576,7 +576,7 @@ class _SendmsgState extends State<Sendmsg> {
 
   Future<void> sendMessagePost(message) async {
     final content = {
-      "filtre": [dropdownValues.indexOf(_chosenValue)],
+      "filtre": [dropdownValues.indexOf(_chosenValue).toString()],
       "content": message
     };
     final url = Uri.parse('$urlPrefix/messages/newMessageText');
