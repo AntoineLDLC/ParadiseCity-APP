@@ -19,8 +19,7 @@ class Homepage extends StatelessWidget {
   final widgetmain = <widgetelements>[
     // On creer une ref pour les noms des widgets
     new widgetelements("Live"), //[0]
-    new widgetelements("Vidéo"), //[1]
-    new widgetelements("Message"), //[2]
+    new widgetelements("Messages"), //[2]
     new widgetelements("Sondage"), //[3]
     new widgetelements("Jeux"), //[4]
   ];
@@ -35,7 +34,7 @@ class Homepage extends StatelessWidget {
         primaryColor: Color.fromRGBO(52, 73, 94, 1), // Couleur
       ),
       home: Scaffold(
-        backgroundColor: Colors.white60,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(_title),
         ),
@@ -84,8 +83,6 @@ class Homepage extends StatelessWidget {
           MyWidget(widgetmain[2]),
           ligneblanche(),
           MyWidget(widgetmain[3]),
-          ligneblanche(),
-          MyWidget(widgetmain[4]),
         ]),
       ),
     );
@@ -144,7 +141,7 @@ class _LivePageState extends State<LivePage> {
                   }
                 },
                 child: liveIsOn
-                    ? const Text('Lancer le live')
+                    ? const Text('Faire une demande de live')
                     : const Text('Terminer le live'),
               ),
             ),
@@ -155,7 +152,7 @@ class _LivePageState extends State<LivePage> {
   }
 
   Future<void> Postliveon() async {
-    final url = Uri.parse('$urlPrefix/screen/1/Live/On');
+    final url = Uri.parse('$urlPrefix/screen/Live/On');
     final headers = {"Content-type": "application/json"};
     final response = await post(url, headers: headers);
     print('Status code: ${response.statusCode}');
@@ -163,7 +160,7 @@ class _LivePageState extends State<LivePage> {
   }
 
   Future<void> Postliveoff() async {
-    final url = Uri.parse('$urlPrefix/screen/2/Live/Off');
+    final url = Uri.parse('$urlPrefix/screen/Live/Off');
     final headers = {"Content-type": "application/json"};
     final response = await post(url, headers: headers);
     print('Status code: ${response.statusCode}');
@@ -178,40 +175,6 @@ class _LivePageState extends State<LivePage> {
     debugPrint('Body: ${response.body}');
     var getData = jsonDecode(response.body);
     print(getData['screensCommands']['screen1']);
-  }
-}
-
-/// ------- Videopage -------
-class Videopage extends StatelessWidget {
-  final widgetphoto = <widgetelements>[
-    new widgetelements("Vidéo"),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Vidéo"),
-      ),
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Center(
-              child: Image.network(
-                  "https://static.thenounproject.com/png/745489-200.png"),
-            ),
-            Center(
-              child: Text(
-                'Page en développement',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -400,13 +363,7 @@ class MyWidget extends StatelessWidget {
           MaterialPageRoute(builder: (context) => LivePage()),
         );
         break;
-      case "Vidéo":
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Videopage()),
-        );
-        break;
-      case "Message":
+      case "Messages":
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Msgpage()),
