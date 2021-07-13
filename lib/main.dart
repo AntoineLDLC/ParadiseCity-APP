@@ -91,7 +91,7 @@ class Homepage extends StatelessWidget {
 
 /// ------- Livepage -------
 class LivePage extends StatefulWidget {
-  const LivePage({Key key}) : super(key: key);
+  const LivePage({Key? key}) : super(key: key);
 
   @override
   _LivePageState createState() => _LivePageState();
@@ -304,7 +304,7 @@ class Jeuxpage extends StatelessWidget {
 
 /// Widget flèche de déplacement
 class Gamewidget extends StatelessWidget {
-  const Gamewidget({Key key}) : super(key: key);
+  const Gamewidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -353,7 +353,7 @@ class Gamewidget extends StatelessWidget {
 /// Class qui permet que de changer de page lorsqu'on click sur les widgets
 class MyWidget extends StatelessWidget {
   final widgetelements element;
-  const MyWidget(this.element, {Key key}) : super(key: key);
+  const MyWidget(this.element, {Key? key}) : super(key: key);
 
   void ChangePage(context) {
     switch (element.name) {
@@ -425,7 +425,7 @@ class MyWidget extends StatelessWidget {
 }
 
 class ligneblanche extends StatelessWidget {
-  const ligneblanche({Key key}) : super(key: key);
+  const ligneblanche({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +448,7 @@ class ligneblanche extends StatelessWidget {
 
 //-------------------------------------------------------------------------------//
 class Sendmsg extends StatefulWidget {
-  const Sendmsg({Key key}) : super(key: key);
+  const Sendmsg({Key? key}) : super(key: key);
 
   @override
   _SendmsgState createState() => _SendmsgState();
@@ -457,7 +457,7 @@ class Sendmsg extends StatefulWidget {
 class _SendmsgState extends State<Sendmsg> {
   TextEditingController messageController = TextEditingController();
   @override
-  String _chosenValue;
+  String? _chosenValue;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -504,7 +504,7 @@ class _SendmsgState extends State<Sendmsg> {
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
               ),
-              onChanged: (String value) {
+              onChanged: (String? value) {
                 setState(() {
                   _chosenValue = value;
                 });
@@ -533,7 +533,7 @@ class _SendmsgState extends State<Sendmsg> {
 
   Future<void> sendMessagePost(message) async {
     final content = {
-      "filtre": [dropdownValues.indexOf(_chosenValue).toString()],
+      "filtre": [dropdownValues.indexOf(_chosenValue!).toString()],
       "content": message
     };
     final url = Uri.parse('$urlPrefix/messages/newMessageText');
@@ -547,7 +547,7 @@ class _SendmsgState extends State<Sendmsg> {
 
 class MessagesList extends StatefulWidget {
   var getData;
-  MessagesList(this.getData, {Key key}) : super(key: key);
+  MessagesList(this.getData, {Key? key}) : super(key: key);
 
   @override
   _MessagesListState createState() => _MessagesListState();
@@ -582,7 +582,7 @@ class MessageData {
 
 class Prb extends StatelessWidget {
   final MessageData data;
-  Prb(this.data, {Key key}) : super(key: key);
+  Prb(this.data, {Key? key}) : super(key: key);
 
   var colorFont = {
     0: [Color.fromRGBO(220, 38, 38, 1), Color.fromRGBO(254, 202, 202, 1)],
@@ -616,10 +616,10 @@ class Prb extends StatelessWidget {
                 child: Text(dropdownValues[data.category],
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: colorFont[data.category][0],
+                      color: colorFont[data.category]![0],
                       background: Paint()
                         ..strokeWidth = 17.0
-                        ..color = colorFont[data.category][1]
+                        ..color = colorFont[data.category]![1]
                         ..style = PaintingStyle.stroke
                         ..strokeJoin = StrokeJoin.round,
                     )),
@@ -641,7 +641,7 @@ var dropdownValues = <String>[
 ];
 
 class voicepage extends StatefulWidget {
-  const voicepage({Key key}) : super(key: key);
+  const voicepage({Key ?key}) : super(key: key);
 
   @override
   _voicepageState createState() => _voicepageState();
@@ -677,7 +677,7 @@ class _voicepageState extends State<voicepage> {
 }
 
 class sendvideopage extends StatefulWidget {
-  const sendvideopage({Key key}) : super(key: key);
+  const sendvideopage({Key ?key}) : super(key: key);
 
   @override
   _sendvideopageState createState() => _sendvideopageState();
