@@ -522,6 +522,8 @@ class _SendmsgState extends State<Sendmsg> {
                   print(
                     _chosenValue,
                   );
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => Homepage() ));
                 },
               ),
             ),

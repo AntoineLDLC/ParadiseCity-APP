@@ -10,7 +10,7 @@ const RESOURCES = {
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "index.html": "b0266844d2f033f04196835e1207f6a0",
 "/": "b0266844d2f033f04196835e1207f6a0",
-"main.dart.js": "916982bcea62f5bd7e3028e320a72d77",
+"main.dart.js": "ae8d8f178d45f854796913ae0ca324af",
 "version.json": "1e781da3636b3a40ff8b6bd14067bf9e"
 };
 
